@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SPC 管制圖 · OpenClaw</title>
+  <link rel="stylesheet" href="/assets/css/style.css?v=2" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body class="tool-page">
+  <div class="app-bg" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">
+        <span class="logo-mark" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
+        <span class="logo-text">Open<span>Claw</span> 製造</span>
+      </a>
+      <nav class="header-nav">
+        <a href="/" class="nav-link">← 首頁</a>
+        <a href="/openclaw/" class="btn btn-primary">AI 控制台</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container page-main">
+    <div class="page-hero">
+      <p class="breadcrumb"><a href="/">首頁</a> / <span>SPC\ 管制圖與製程能力</span></p>
+      <h1 class="page-title">SPC 管制圖與製程能力</h1>
+      <p class="page-desc">輸入量測數據與規格上下限，計算平均、標準差、Cpk，並繪製管制圖。</p>
+    </div>
+    <div class="layout-two">
+      <div class="panel">
+        <h3>量測資料</h3>
+        <form id="form">
+          <div class="form-group">
+            <label>檢驗項目名稱</label>
+            <input type="text" id="itemName" value="外徑" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>規格下限 LSL</label>
+              <input type="number" id="lsl" step="any" value="9.95" />
+            </div>
+            <div class="form-group">
+              <label>規格上限 USL</label>
+              <input type="number" id="usl" step="any" value="10.05" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>量測值（空格、逗號或換行分隔）</label>
+            <textarea id="data" rows="6" placeholder="10.01 10.02 9.99 ...">10.01 10.02 9.99 10.00 10.03 9.98 10.01 10.00 9.97 10.02 10.01 9.99 10.00 10.04 9.98 10.01 10.00 9.99 10.02 10.01</textarea>
+          </div>
+          <button type="submit" class="btn">分析並繪圖</button>
+        </form>
+      </div>
+      <div class="panel panel-output">
+        <h3>分析結果</h3>
+        <div class="stats-row" id="stats"></div>
+        <div class="chart-wrap"><canvas id="chart"></canvas></div>
+        <pre class="output-box" id="output" style="max-height:200px"></pre>
+        <div class="output-actions">
+          <button type="button" class="btn btn-secondary" onclick="copyOutput('output')">複製報告</button>
+        </div>
+      </div>
+    </div>
+  
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a href="/">返回首頁</a>
+      <span>·</span>
+      <a href="/openclaw/">OpenClaw 控制台</a>
+    </div>
+  </footer>
+
+</main>
+  <script src="/assets/js/common.js?v=2"></script>
+  <script>
+    let chartInst = null;
+    function cpkCalc(data, lsl, usl) {
+      const m = mean(data);
+      const s = stdDev(data);
+      if (!s) return { cpk: null, cp: null, cpu: null, cpl: null };
+      const cpu = (usl - m) / (3 * s);
+      const cpl = (m - lsl) / (3 * s);
+      const cpk = Math.min(cpu, cpl);
+      const cp = (usl - lsl) / (6 * s);
+      return { cpk, cp, cpu, cpl, mean: m, std: s };
+    }
+    $("form").onsubmit = (e) => {
+      e.preventDefault();
+      const data = parseNumbers($("data").value);
+      const lsl = parseFloat($("lsl").value);
+      const usl = parseFloat($("usl").value);
+      if (data.length < 2) {
+        alert("請至少輸入 2 筆量測值");
+        return;
+      }
+      const { cpk, cp, cpu, cpl, mean: m, std: s } = cpkCalc(data, lsl, usl);
+      const ucl = m + 3 * s;
+      const lcl = m - 3 * s;
+      const outSpec = data.filter((x) => x < lsl || x > usl).length;
+      $("stats").innerHTML = `
+        <div class="stat"><div class="label">樣本數 n</div><div class="value">${data.length}</div></div>
+        <div class="stat"><div class="label">平均 X̄</div><div class="value">${m.toFixed(4)}</div></div>
+        <div class="stat"><div class="label">標準差 σ</div><div class="value">${s.toFixed(4)}</div></div>
+        <div class="stat"><div class="label">Cpk</div><div class="value">${cpk != null ? cpk.toFixed(3) : "—"}</div></div>
+        <div class="stat"><div class="label">超規數</div><div class="value">${outSpec}</div></div>
+      `;
+      if (chartInst) chartInst.destroy();
+      chartInst = new Chart($("chart"), {
+        type: "line",
+        data: {
+          labels: data.map((_, i) => i + 1),
+          datasets: [
+            { label: "量測值", data, borderColor: "#3b82f6", tension: 0.1 },
+            { label: "USL", data: data.map(() => usl), borderColor: "#ef4444", borderDash: [5, 5], pointRadius: 0 },
+            { label: "LSL", data: data.map(() => lsl), borderColor: "#ef4444", borderDash: [5, 5], pointRadius: 0 },
+            { label: "UCL", data: data.map(() => ucl), borderColor: "#f59e0b", borderDash: [2, 2], pointRadius: 0 },
+            { label: "LCL", data: data.map(() => lcl), borderColor: "#f59e0b", borderDash: [2, 2], pointRadius: 0 },
+            { label: "中心線", data: data.map(() => m), borderColor: "#22c55e", borderDash: [3, 3], pointRadius: 0 },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: "#64748b" } } },
+          scales: {
+            x: { ticks: { color: "#64748b" }, grid: { color: "#e2e8f0" } },
+            y: { ticks: { color: "#64748b" }, grid: { color: "#e2e8f0" } },
+          },
+        },
+      });
+      let judgment = "製程能力充足";
+      if (cpk != null && cpk < 1) judgment = "製程能力不足，需改善";
+      else if (cpk != null && cpk < 1.33) judgment = "製程能力尚可，建議持續監控";
+      showOutput("output", [
+        `=== SPC 分析：${$("itemName").value} ===`,
+        `時間：${formatDate()}`,
+        `規格：${lsl} ~ ${usl}`,
+        `n=${data.length}  X̄=${m.toFixed(4)}  σ=${s.toFixed(4)}`,
+        `UCL=${ucl.toFixed(4)}  LCL=${lcl.toFixed(4)}`,
+        `Cp=${cp != null ? cp.toFixed(3) : "—"}  Cpk=${cpk != null ? cpk.toFixed(3) : "—"}`,
+        `CPU=${cpu != null ? cpu.toFixed(3) : "—"}  CPL=${cpl != null ? cpl.toFixed(3) : "—"}`,
+        `超規點數：${outSpec}`,
+        `判定：${judgment}`,
+        outSpec > 0 ? "建議：啟動異常調查並暫停批量放行（若適用）" : "",
+      ].filter(Boolean).join("\n"));
+    };
+  </script>
+</body>
+</html>

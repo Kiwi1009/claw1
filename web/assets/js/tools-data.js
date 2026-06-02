@@ -1,0 +1,30 @@
+/** 25 項製造流程 — 使用率排序 */
+const MANUFACTURING_TOOLS = [
+  { rank: 1, slug: "mes-log", name: "現場數位登錄", icon: "📋", cat: "現場", freq: "daily", desc: "工單產量、不良、停機，輕量 MES 登錄。" },
+  { rank: 2, slug: "shift-handoff", name: "班次交接摘要", icon: "🔄", cat: "現場", freq: "daily", desc: "設備、異常、待辦與安全提醒交班摘要。" },
+  { rank: 3, slug: "purchase-record", name: "採購紀錄登錄", icon: "🛒", cat: "供應鏈", freq: "daily", desc: "供應商、料號、數量、交期結構化登錄。" },
+  { rank: 4, slug: "iqc", name: "IQC 來料檢驗", icon: "🔍", cat: "品質", freq: "daily", desc: "進料批號、抽樣、判定與異常處置。" },
+  { rank: 5, slug: "spc", name: "SPC 管制圖", icon: "📊", cat: "品質", freq: "daily", desc: "Cpk、管制圖與超規判定。" },
+  { rank: 6, slug: "production-schedule", name: "生產排程建議", icon: "📅", cat: "生管", freq: "daily", desc: "工單交期與瓶頸產能優先序。" },
+  { rank: 7, slug: "warehouse-report", name: "倉儲營運報表", icon: "📦", cat: "供應鏈", freq: "weekly", desc: "ABC 分類、缺貨警示與庫存圖表。" },
+  { rank: 8, slug: "equipment-maintenance", name: "設備保養提醒", icon: "🔧", cat: "設備", freq: "weekly", desc: "校準週期、到期日與工單草案。" },
+  { rank: 9, slug: "customer-response", name: "客戶回信草稿", icon: "✉️", cat: "業務", freq: "daily", desc: "交期、品質、退款等客服回覆。" },
+  { rank: 10, slug: "complaint-8d", name: "客訴 8D 報告", icon: "📑", cat: "品質", freq: "event", desc: "D1–D8 八個紀律完整草案。" },
+  { rank: 11, slug: "quotation", name: "專業報價單", icon: "💰", cat: "業務", freq: "daily", desc: "報價單號、條款、品項與總額草案。" },
+  { rank: 12, slug: "cnc-quote", name: "CNC 加工報價", icon: "⚙️", cat: "工程", freq: "weekly", desc: "材質、工時、數量與加工費估算。" },
+  { rank: 13, slug: "supplier-scorecard", name: "供應商評分卡", icon: "⭐", cat: "供應鏈", freq: "weekly", desc: "交期、品質、價格多維度評分排名。" },
+  { rank: 14, slug: "capa", name: "CAPA 矯正預防", icon: "🛡️", cat: "品質", freq: "event", desc: "不符合項、根因與有效性驗證。" },
+  { rank: 15, slug: "kaizen-a3", name: "改善提案 A3", icon: "💡", cat: "改善", freq: "weekly", desc: "問題、現況、對策與追蹤 A3 架構。" },
+  { rank: 16, slug: "cad-review", name: "圖面審閱摘要", icon: "📐", cat: "工程", freq: "event", desc: "DWG/DXF 關鍵尺寸與審圖檢查表。" },
+  { rank: 17, slug: "incident-fupan", name: "產線事故復盤", icon: "⚠️", cat: "現場", freq: "event", desc: "時間線、5 Why 與防再發行動。" },
+  { rank: 18, slug: "predictive-maintenance", name: "預測性維護分析", icon: "📡", cat: "設備", freq: "weekly", desc: "感測趨勢、停機與維護窗口建議。" },
+  { rank: 19, slug: "fjsp-repair", name: "排程修復 FJSP", icon: "🧩", cat: "生管", freq: "event", desc: "不可行排程調整與交期衝突說明。" },
+  { rank: 20, slug: "iso-audit", name: "ISO 9001 內稽", icon: "✅", cat: "品質", freq: "weekly", desc: "條款檢查表與不符合風險點。" },
+  { rank: 21, slug: "bom-analyzer", name: "BOM 報價比對", icon: "🔗", cat: "供應鏈", freq: "event", desc: "多供應商報價對齊與需求預測。" },
+  { rank: 22, slug: "heat-treatment", name: "熱處理製程建議", icon: "🔥", cat: "工程", freq: "event", desc: "材質、硬度與表面處理路線。" },
+  { rank: 23, slug: "defect-codebook", name: "缺陷碼標準化", icon: "🏷️", cat: "品質", freq: "daily", desc: "測試備註對照企業 codebook。" },
+  { rank: 24, slug: "defect-ai", name: "外觀不良初篩", icon: "👁️", cat: "品質", freq: "daily", desc: "缺陷類型、位置與嚴重度紀錄。" },
+  { rank: 25, slug: "consulting-report", name: "主管週報簡報", icon: "📈", cat: "管理", freq: "weekly", desc: "KPI、異常與改善專案週報大綱。" },
+];
+
+const CATEGORY_ORDER = ["全部", "現場", "品質", "生管", "供應鏈", "設備", "業務", "工程", "改善", "管理"];

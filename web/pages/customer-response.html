@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>客戶回信草稿 · OpenClaw</title>
+  <link rel="stylesheet" href="/assets/css/style.css?v=2" />
+</head>
+<body class="tool-page">
+  <div class="app-bg" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">
+        <span class="logo-mark" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
+        <span class="logo-text">Open<span>Claw</span> 製造</span>
+      </a>
+      <nav class="header-nav">
+        <a href="/" class="nav-link">← 首頁</a>
+        <a href="/openclaw/" class="btn btn-primary">AI 控制台</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container page-main">
+    <div class="page-hero">
+      <p class="breadcrumb"><a href="/">首頁</a> / <span>客戶回信草稿</span></p>
+      <h1 class="page-title">客戶回信草稿</h1>
+      <p class="page-desc">依情境產出專業、有同理心的客服回覆草案，寄送前請人工審閱。</p>
+    </div>
+    <div class="layout-two">
+      <div class="panel">
+        <h3>回信設定</h3>
+        <form id="form">
+          <div class="form-group">
+            <label>情境類型</label>
+            <select id="scenario">
+              <option value="delay">交期延遲說明</option>
+              <option value="quality">品質異常回覆</option>
+              <option value="quote">報價跟進</option>
+              <option value="refund">退款／補貨協調</option>
+              <option value="thanks">感謝與確認收貨</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>客戶稱呼</label>
+              <input type="text" id="customer" value="王經理" />
+            </div>
+            <div class="form-group">
+              <label>您的公司／署名</label>
+              <input type="text" id="company" value="○○精密工業" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>訂單／料號／批號（選填）</label>
+            <input type="text" id="ref" placeholder="PO-12345 / Part-A / LOT-xxx" />
+          </div>
+          <div class="form-group">
+            <label>客戶來信重點或您要說明的內容</label>
+            <textarea id="context" rows="5" placeholder="客戶反映交期延遲 3 天，需說明原因與新交期"></textarea>
+          </div>
+          <div class="form-group">
+            <label>語氣</label>
+            <select id="tone">
+              <option value="formal">正式</option>
+              <option value="warm">溫暖專業</option>
+            </select>
+          </div>
+          <button type="submit" class="btn">產出回信草案</button>
+        </form>
+      </div>
+      <div class="panel panel-output">
+        <h3>郵件草案</h3>
+        <pre class="output-box" id="output"></pre>
+        <div class="output-actions">
+          <button type="button" class="btn btn-secondary" onclick="copyOutput('output')">複製</button>
+        </div>
+      </div>
+    </div>
+  
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a href="/">返回首頁</a>
+      <span>·</span>
+      <a href="/openclaw/">OpenClaw 控制台</a>
+    </div>
+  </footer>
+
+</main>
+  <script src="/assets/js/common.js?v=2"></script>
+  <script>
+    const templates = {
+      delay: (c, co, ref, ctx, warm) =>
+        `${c} 您好：\n\n感謝來信。關於${ref ? `訂單 ${ref}` : "貴司訂單"}交期事宜，我們已立即與生管及產線確認。\n\n${ctx || "因物料到料延遲，原訂交期需順延。"}\n\n目前預計新交期為：（請填寫具體日期）。我們已將此案列為優先排程，並於每日主動回報進度，直至出貨完成。\n\n對於造成貴司作業不便，我們深表歉意，也感謝您的理解與支持。\n\n${warm ? "若有任何急件需求，歡迎隨時來電，我們將盡力協調。\n\n" : ""}祝 商祺\n${co}\n（您的姓名）`,
+      quality: (c, co, ref, ctx, warm) =>
+        `${c} 您好：\n\n感謝您反映${ref ? ` ${ref}` : ""}品質問題，我們高度重視。\n\n${ctx || "已啟動品保調查，並暫停相關批次出貨。"}\n\n初步處置：\n1. 隔離疑似批號，保留樣品\n2. 24 小時內提供初步調查結果\n3. 依調查結果提出矯正措施與預防對策\n\n${warm ? "我們理解此事件對貴司的影響，將全力配合貴司時程。\n\n" : ""}祝 商祺\n${co}`,
+      quote: (c, co, ref, ctx) =>
+        `${c} 您好：\n\n感謝詢價${ref ? `（${ref}）` : ""}。\n\n${ctx || "附件為依您規格整理之報價說明，含交期與備註條款。"}\n\n若規格或數量需調整，歡迎告知，我們可於 1 個工作天內更新報價。\n\n期待與貴司合作。\n\n祝 商祺\n${co}`,
+      refund: (c, co, ref, ctx) =>
+        `${c} 您好：\n\n關於${ref || "退換貨"}需求，我們已受理並登錄案號：（請填）。\n\n${ctx || "經內部確認，同意辦理補貨／退款（請勾選）。"}\n\n預計處理時程：（請填）。所需文件或樣品寄送方式將由專人與您聯繫。\n\n再次為此次不便致歉。\n\n祝 商祺\n${co}`,
+      thanks: (c, co, ref) =>
+        `${c} 您好：\n\n感謝貴司訂購${ref ? ` ${ref}` : ""}，我們已確認收款／出貨資訊。\n\n若收貨後有任何問題，請隨時聯繫，我們將於 4 小時內回覆。\n\n期待持續為貴司服務。\n\n祝 商祺\n${co}`,
+    };
+    $("form").onsubmit = (e) => {
+      e.preventDefault();
+      const warm = $("tone").value === "warm";
+      const fn = templates[$("scenario").value];
+      showOutput(
+        "output",
+        "主旨：（請依情境填寫）\n\n" +
+          fn(
+            $("customer").value,
+            $("company").value,
+            $("ref").value,
+            $("context").value,
+            warm
+          )
+      );
+    };
+  </script>
+</body>
+</html>

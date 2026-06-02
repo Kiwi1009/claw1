@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>客訴 8D 報告 · OpenClaw</title>
+  <link rel="stylesheet" href="/assets/css/style.css?v=2" />
+</head>
+<body class="tool-page">
+  <div class="app-bg" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">
+        <span class="logo-mark" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
+        <span class="logo-text">Open<span>Claw</span> 製造</span>
+      </a>
+      <nav class="header-nav">
+        <a href="/" class="nav-link">← 首頁</a>
+        <a href="/openclaw/" class="btn btn-primary">AI 控制台</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container page-main">
+    <div class="page-hero">
+      <p class="breadcrumb"><a href="/">首頁</a> / <span>客訴\ 8D\ 報告</span></p>
+      <h1 class="page-title">客訴 8D 報告</h1>
+      <p class="page-desc">輸入客戶投訴基本資料，自動產出 D1–D8 八個紀律草案框架。</p>
+    </div>
+    <div class="layout-two">
+      <div class="panel">
+        <h3>客訴資料</h3>
+        <form id="form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>客戶名稱</label>
+              <input type="text" id="customer" required />
+            </div>
+            <div class="form-group">
+              <label>8D 編號</label>
+              <input type="text" id="reportId" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>產品／料號</label>
+              <input type="text" id="product" />
+            </div>
+            <div class="form-group">
+              <label>批號</label>
+              <input type="text" id="lot" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>不良數量</label>
+              <input type="text" id="qty" placeholder="200 pcs" />
+            </div>
+            <div class="form-group">
+              <label>發生日期</label>
+              <input type="date" id="occurDate" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>問題描述（症狀、何時發現、客戶影響）</label>
+            <textarea id="problem" rows="4" required></textarea>
+          </div>
+          <div class="form-group">
+            <label>已執行圍堵措施（選填）</label>
+            <textarea id="containment" rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label>團隊成員（選填，逗號分隔）</label>
+            <input type="text" id="team" placeholder="品保,生管,工程,業務" />
+          </div>
+          <button type="submit" class="btn">產出 8D 草案</button>
+        </form>
+      </div>
+      <div class="panel panel-output">
+        <h3>8D 報告草案</h3>
+        <pre class="output-box" id="output" style="max-height:520px"></pre>
+        <div class="output-actions">
+          <button type="button" class="btn btn-secondary" onclick="copyOutput('output')">複製</button>
+          <button type="button" class="btn btn-secondary" onclick="downloadOutput('output','8d-report.txt')">下載</button>
+        </div>
+      </div>
+    </div>
+  
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a href="/">返回首頁</a>
+      <span>·</span>
+      <a href="/openclaw/">OpenClaw 控制台</a>
+    </div>
+  </footer>
+
+</main>
+  <script src="/assets/js/common.js?v=2"></script>
+  <script>
+    const d = new Date();
+    $("occurDate").value = d.toISOString().slice(0, 10);
+    $("reportId").value = `8D-${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}-001`;
+    $("form").onsubmit = (e) => {
+      e.preventDefault();
+      const team = ($("team").value || "品保, 生管, 工程, 業務")
+        .split(/[,，]/)
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const problem = $("problem").value;
+      showOutput("output", [
+        "# 8D 矯正措施報告（草案）",
+        `8D 編號：${$("reportId").value}`,
+        `客戶：${$("customer").value}`,
+        `產品：${$("product").value || "—"}  批號：${$("lot").value || "—"}`,
+        `數量：${$("qty").value || "—"}  發生日期：${$("occurDate").value}`,
+        `報告日期：${formatDate().slice(0, 10)}`,
+        "",
+        "## D1 成立團隊",
+        team.map((m, i) => `${i + 1}. ${m} — （職責待填）`).join("\n"),
+        "",
+        "## D2 問題描述",
+        "What：",
+        problem,
+        "",
+        "When：" + ($("occurDate").value || "—"),
+        "Where：客戶端／客戶產線（待確認）",
+        "Who：發現者（待填）",
+        "How many：" + ($("qty").value || "—"),
+        "How often：（待統計）",
+        "",
+        "## D3 圍堵措施",
+        $("containment").value ||
+          "1. 隔離在庫及在途同批號產品\n2. 暫停出貨直至調查完成\n3. 通知相關站點加強檢驗",
+        "",
+        "## D4 根本原因分析",
+        "（待完成 — 建議 5 Why / 魚骨圖）",
+        "Why 1：\nWhy 2：\nWhy 3：\nWhy 4：\nWhy 5：",
+        "判定根本原因：（待填）",
+        "",
+        "## D5 永久對策",
+        "1. （針對根本原因之對策 — 待填）",
+        "2. ",
+        "",
+        "## D6 實施與驗證",
+        "實施日期：（待填）",
+        "驗證方式：重複性測試／客戶確認／量產監控",
+        "驗證結果：（待填）",
+        "",
+        "## D7 預防再發",
+        "1. 更新 FMEA / 控制計畫",
+        "2. 修訂 SOP / 檢驗標準",
+        "3. 水平展開至類似產品／產線",
+        "",
+        "## D8 結案與祝賀團隊",
+        "客戶確認：（待填）",
+        "結案日期：（待填）",
+        "團隊致謝：（待填）",
+        "",
+        "---",
+        "狀態：草案 · 需品保主管審核後發送客戶",
+      ].join("\n"));
+    };
+  </script>
+</body>
+</html>

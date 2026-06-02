@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BOM 報價比對 · OpenClaw 製造</title>
+  <link rel="stylesheet" href="/assets/css/style.css?v=2" />
+</head>
+<body class="tool-page">
+  <div class="app-bg" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">
+        <span class="logo-mark" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
+        <span class="logo-text">Open<span>Claw</span> 製造</span>
+      </a>
+      <nav class="header-nav">
+        <a href="/" class="nav-link">← 首頁</a>
+        <a href="/openclaw/" class="btn btn-primary">AI 控制台</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container page-main">
+    <div class="page-hero">
+      <p class="breadcrumb"><a href="/">首頁</a> / <span>BOM\ 報價比對</span></p>
+      <h1>BOM 報價比對</h1>
+      <p class="page-desc">多供應商料號對齊摘要。</p>
+    </div>
+    <div class="layout-two">
+      <div class="panel">
+        <h3>輸入</h3>
+        <form id="form">
+          <div class="form-group"><label>專案名稱</label><input id="proj" /></div>
+          <div class="form-group"><label>BOM 行（每行：料號,品名,供應商A價,供應商B價）</label><textarea id="bom" rows="8"></textarea></div>
+        
+          <button type="submit" class="btn" style="margin-top:0.75rem">產出草案</button>
+        </form>
+      </div>
+      <div class="panel panel-output">
+        <h3>輸出草案</h3>
+        <pre class="output-box" id="output"><span class="output-placeholder">填寫後按「產出草案」</span></pre>
+        <div class="output-actions">
+          <button type="button" class="btn btn-secondary" onclick="copyOutput('output')">複製</button>
+          <button type="button" class="btn btn-secondary" onclick="downloadOutput('output','bom-analyzer.txt')">下載</button>
+        </div>
+      </div>
+    </div>
+  
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a href="/">返回首頁</a>
+      <span>·</span>
+      <a href="/openclaw/">OpenClaw 控制台</a>
+    </div>
+  </footer>
+
+</main>
+  <script src="/assets/js/common.js?v=2"></script>
+  <script>
+          $("form").onsubmit=e=>{e.preventDefault();
+            const rows=$("bom").value.split("\n").filter(Boolean);
+            showOutput("output",["=== BOM 比對 ===",`專案：${$("proj").value}`,...rows.map(r=>{const p=r.split(/[,，]/);const a=+p[2],b=+p[3];return`${p[0]} ${p[1]} | A:${a} B:${b} ${a<b?"→選A":"→選B"}`;})].join("\n"));
+          };
+        </script>
+</body>
+</html>

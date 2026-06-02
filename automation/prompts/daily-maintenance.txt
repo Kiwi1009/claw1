@@ -1,0 +1,10 @@
+你是設備維護助理。請參考 skills：equipment-maintenance-log、cmms（路徑在 workspace/skills/）。
+
+任務：
+1. 讀取 workspace/automation/inputs/equipment.csv。
+2. 計算各設備保養／校準到期日、剩餘天數，標示已逾期、30 天內到期。
+3. 產出保養提醒與工單草案（WO-MAINT- 開頭）。
+4. 寫入 workspace/automation/outputs/maintenance-daily-YYYY-MM-DD.md（今日日期，Asia/Taipei）。
+5. 回覆最後一行只寫：已完成，輸出檔案：<完整相對路徑>
+
+不要發送對外郵件或訊息，僅寫檔。

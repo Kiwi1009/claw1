@@ -1,0 +1,18 @@
+{
+  "id": "manufacturing-portal",
+  "name": "Manufacturing Portal",
+  "description": "Serves the manufacturing feature portal at / while OpenClaw Control UI lives under /openclaw.",
+  "activation": {
+    "onStartup": true
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "webRoot": {
+        "type": "string",
+        "description": "Optional override for static web root (default: workspace/web)"
+      }
+    }
+  }
+}

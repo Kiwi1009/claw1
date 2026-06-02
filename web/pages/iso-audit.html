@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ISO 9001 內稽 · OpenClaw 製造</title>
+  <link rel="stylesheet" href="/assets/css/style.css?v=2" />
+</head>
+<body class="tool-page">
+  <div class="app-bg" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">
+        <span class="logo-mark" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
+        <span class="logo-text">Open<span>Claw</span> 製造</span>
+      </a>
+      <nav class="header-nav">
+        <a href="/" class="nav-link">← 首頁</a>
+        <a href="/openclaw/" class="btn btn-primary">AI 控制台</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container page-main">
+    <div class="page-hero">
+      <p class="breadcrumb"><a href="/">首頁</a> / <span>ISO\ 9001\ 內稽</span></p>
+      <h1>ISO 9001 內稽</h1>
+      <p class="page-desc">條款檢查與不符合風險。</p>
+    </div>
+    <div class="layout-two">
+      <div class="panel">
+        <h3>輸入</h3>
+        <form id="form">
+          <div class="form-group"><label>稽核範圍／程序</label><input id="scope" /></div>
+          <div class="form-group"><label>條款檢查（每行：條款,狀態,備註）</label><textarea id="clauses" rows="8">8.5.1,符合,
+8.5.2,觀察,標籤可追溯性待加強</textarea></div>
+        
+          <button type="submit" class="btn" style="margin-top:0.75rem">產出草案</button>
+        </form>
+      </div>
+      <div class="panel panel-output">
+        <h3>輸出草案</h3>
+        <pre class="output-box" id="output"><span class="output-placeholder">填寫後按「產出草案」</span></pre>
+        <div class="output-actions">
+          <button type="button" class="btn btn-secondary" onclick="copyOutput('output')">複製</button>
+          <button type="button" class="btn btn-secondary" onclick="downloadOutput('output','iso-audit.txt')">下載</button>
+        </div>
+      </div>
+    </div>
+  
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a href="/">返回首頁</a>
+      <span>·</span>
+      <a href="/openclaw/">OpenClaw 控制台</a>
+    </div>
+  </footer>
+
+</main>
+  <script src="/assets/js/common.js?v=2"></script>
+  <script>
+          $("form").onsubmit=e=>{e.preventDefault();
+            showOutput("output",["=== ISO 9001 內稽檢查表 ===",`範圍：${$("scope").value}`,`日期：${formatDate()}`,$("clauses").value].join("\n"));
+          };
+        </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>產線事故復盤 · OpenClaw 製造</title>
+  <link rel="stylesheet" href="/assets/css/style.css?v=2" />
+</head>
+<body class="tool-page">
+  <div class="app-bg" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">
+        <span class="logo-mark" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
+        <span class="logo-text">Open<span>Claw</span> 製造</span>
+      </a>
+      <nav class="header-nav">
+        <a href="/" class="nav-link">← 首頁</a>
+        <a href="/openclaw/" class="btn btn-primary">AI 控制台</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container page-main">
+    <div class="page-hero">
+      <p class="breadcrumb"><a href="/">首頁</a> / <span>產線事故復盤</span></p>
+      <h1>產線事故復盤</h1>
+      <p class="page-desc">時間線、5 Why 與防再發行動。</p>
+    </div>
+    <div class="layout-two">
+      <div class="panel">
+        <h3>輸入</h3>
+        <form id="form">
+          <div class="form-group"><label>事故標題</label><input id="title" required /></div>
+          <div class="form-group"><label>時間線</label><textarea id="timeline" rows="4"></textarea></div>
+          <div class="form-group"><label>影響（停線、產量、客戶）</label><textarea id="impact"></textarea></div>
+          <div class="form-group"><label>5 Why</label><textarea id="why" rows="4"></textarea></div>
+        
+          <button type="submit" class="btn" style="margin-top:0.75rem">產出草案</button>
+        </form>
+      </div>
+      <div class="panel panel-output">
+        <h3>輸出草案</h3>
+        <pre class="output-box" id="output"><span class="output-placeholder">填寫後按「產出草案」</span></pre>
+        <div class="output-actions">
+          <button type="button" class="btn btn-secondary" onclick="copyOutput('output')">複製</button>
+          <button type="button" class="btn btn-secondary" onclick="downloadOutput('output','incident-fupan.txt')">下載</button>
+        </div>
+      </div>
+    </div>
+  
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a href="/">返回首頁</a>
+      <span>·</span>
+      <a href="/openclaw/">OpenClaw 控制台</a>
+    </div>
+  </footer>
+
+</main>
+  <script src="/assets/js/common.js?v=2"></script>
+  <script>
+          $("form").onsubmit=e=>{e.preventDefault();
+            showOutput("output",["# 事故復盤",`標題：${$("title").value}`,`時間：${formatDate()}`,`時間線：${$("timeline").value}`,`影響：${$("impact").value}`,`5 Why：${$("why").value}`,`改善：`,`防再發規則：`].join("\n"));
+          };
+        </script>
+</body>
+</html>

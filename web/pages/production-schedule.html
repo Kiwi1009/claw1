@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>生產排程建議 · OpenClaw</title>
+  <link rel="stylesheet" href="/assets/css/style.css?v=2" />
+</head>
+<body class="tool-page">
+  <div class="app-bg" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">
+        <span class="logo-mark" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
+        <span class="logo-text">Open<span>Claw</span> 製造</span>
+      </a>
+      <nav class="header-nav">
+        <a href="/" class="nav-link">← 首頁</a>
+        <a href="/openclaw/" class="btn btn-primary">AI 控制台</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container page-main">
+    <div class="page-hero">
+      <p class="breadcrumb"><a href="/">首頁</a> / <span>生產排程建議</span></p>
+      <h1 class="page-title">生產排程建議</h1>
+      <p class="page-desc">輸入工單清單（每行：工單號,交期YYYY-MM-DD,預計工時hr,優先1-5），依交期與瓶頸產出建議順序。</p>
+    </div>
+    <div class="layout-two">
+      <div class="panel">
+        <h3>工單與產能</h3>
+        <form id="form">
+          <div class="form-group">
+            <label>瓶頸產能（可用工時／日）</label>
+            <input type="number" id="capacity" value="16" min="1" />
+          </div>
+          <div class="form-group">
+            <label>工單清單</label>
+            <textarea id="orders" rows="10">WO-101,2025-05-22,4,5
+WO-102,2025-05-21,6,5
+WO-103,2025-05-23,3,3
+WO-104,2025-05-21,2,4
+WO-105,2025-05-24,8,2</textarea>
+          </div>
+          <p style="font-size:0.8rem;color:var(--muted)">格式：工單號,交期,工時(小時),優先級(1最低5最高)</p>
+          <button type="submit" class="btn">產出排程建議</button>
+        </form>
+      </div>
+      <div class="panel panel-output">
+        <h3>排程草案</h3>
+        <div class="table-wrap" id="tableWrap"></div>
+        <pre class="output-box" id="output"></pre>
+        <div class="output-actions">
+          <button type="button" class="btn btn-secondary" onclick="copyOutput('output')">複製</button>
+          <button type="button" class="btn btn-secondary" onclick="downloadOutput('output','schedule.txt')">下載</button>
+        </div>
+      </div>
+    </div>
+  
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a href="/">返回首頁</a>
+      <span>·</span>
+      <a href="/openclaw/">OpenClaw 控制台</a>
+    </div>
+  </footer>
+
+</main>
+  <script src="/assets/js/common.js?v=2"></script>
+  <script>
+    $("form").onsubmit = (e) => {
+      e.preventDefault();
+      const cap = +$("capacity").value || 16;
+      const orders = parseLines($("orders").value)
+        .map((line) => {
+          const p = line.split(/[,，\t]/).map((s) => s.trim());
+          return {
+            wo: p[0],
+            due: p[1] ? new Date(p[1]) : new Date(8640000000000000),
+            hours: parseFloat(p[2]) || 1,
+            priority: parseInt(p[3], 10) || 3,
+          };
+        })
+        .filter((o) => o.wo);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      orders.sort((a, b) => {
+        const urgencyA = (a.due - today) / 86400000;
+        const urgencyB = (b.due - today) / 86400000;
+        const scoreA = a.priority * 10 - urgencyA;
+        const scoreB = b.priority * 10 - urgencyB;
+        return scoreB - scoreA;
+      });
+      let used = 0;
+      let day = 1;
+      const rows = orders.map((o, i) => {
+        if (used + o.hours > cap) {
+          day++;
+          used = 0;
+        }
+        used += o.hours;
+        const dueStr = isFinite(o.due) ? o.due.toISOString().slice(0, 10) : "—";
+        const late = o.due < today ? "⚠ 已逾期" : "";
+        return { seq: i + 1, ...o, dueStr, day, late };
+      });
+      $("tableWrap").innerHTML = `<table><thead><tr><th>序</th><th>工單</th><th>交期</th><th>工時</th><th>優先</th><th>建議日</th><th>備註</th></tr></thead><tbody>${rows
+        .map(
+          (r) =>
+            `<tr><td>${r.seq}</td><td>${r.wo}</td><td>${r.dueStr}</td><td>${r.hours}h</td><td>${r.priority}</td><td>第${r.day}日</td><td>${r.late}</td></tr>`
+        )
+        .join("")}</tbody></table>`;
+      const overload = used > cap;
+      showOutput("output", [
+        "=== 生產排程建議草案 ===",
+        `產出：${formatDate()}`,
+        `瓶頸日產能：${cap} 小時`,
+        "",
+        ...rows.map(
+          (r) =>
+            `${r.seq}. ${r.wo} | 交期 ${r.dueStr} | ${r.hours}h | 優先 ${r.priority} | 建議第 ${r.day} 日生產 ${r.late}`
+        ),
+        "",
+        "---",
+        "建議事項：",
+        "1. 交期最近且優先級高者排前",
+        "2. 換線時間相近的料號盡量連續生產（SMED）",
+        overload ? "3. ⚠ 最後一日負荷可能超過產能，請調整或加班" : "3. 目前草案在單日產能內可執行",
+        "",
+        "狀態：草案 · 需生管確認後下達現場",
+      ].join("\n"));
+    };
+  </script>
+</body>
+</html>

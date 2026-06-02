@@ -1,0 +1,337 @@
+{
+  "version": 1,
+  "skills": {
+    "uplo-manufacturing": {
+      "version": "1.0.0",
+      "installedAt": 1779167728779
+    },
+    "manufacturing-shift-handoff": {
+      "version": "1.0.0",
+      "installedAt": 1779167739121
+    },
+    "mes": {
+      "version": "1.0.0",
+      "installedAt": 1779167744024
+    },
+    "jit": {
+      "version": "1.0.0",
+      "installedAt": 1779167748335
+    },
+    "integrated-manufacturing-consulting": {
+      "version": "7.3.2",
+      "installedAt": 1779167756169
+    },
+    "manufacturing-fjsp-optimization-fjsp-baseline-repair-with-downtime-and-policy": {
+      "version": "0.1.0",
+      "installedAt": 1779167759001
+    },
+    "manufacturing-codebook-normalization-manufacturing-failure-reason-codebook-normalization": {
+      "version": "0.1.0",
+      "installedAt": 1779167762803
+    },
+    "cnc": {
+      "version": "1.0.0",
+      "installedAt": 1779168008986
+    },
+    "openclaw-cnc-core": {
+      "version": "1.2.1",
+      "installedAt": 1779168013984
+    },
+    "cnc-quote-system": {
+      "version": "1.0.0",
+      "installedAt": 1779168017079
+    },
+    "openclaw-cnc-quick-probe": {
+      "version": "1.0.1",
+      "installedAt": 1779168020096
+    },
+    "cnc-quote-workflow": {
+      "version": "2.0.2",
+      "installedAt": 1779168023530
+    },
+    "cnc-quote-skill": {
+      "version": "1.0.0",
+      "installedAt": 1779168027097
+    },
+    "welding-basics": {
+      "version": "1.0.0",
+      "installedAt": 1779168030135
+    },
+    "iso9001-qms": {
+      "version": "1.0.0",
+      "installedAt": 1779168033914
+    },
+    "spc": {
+      "version": "2.0.0",
+      "installedAt": 1779168037032
+    },
+    "rohoon-6sigma": {
+      "version": "1.8.2",
+      "installedAt": 1779168044703
+    },
+    "metal-price": {
+      "version": "1.0.0",
+      "installedAt": 1779168048793
+    },
+    "cad": {
+      "version": "2.0.2",
+      "installedAt": 1779168267665
+    },
+    "cad-viewer": {
+      "version": "1.0.5",
+      "installedAt": 1779168271289
+    },
+    "cad-to-data": {
+      "version": "2.0.0",
+      "installedAt": 1779168275194
+    },
+    "cad-agent": {
+      "version": "1.0.0",
+      "installedAt": 1779168278168
+    },
+    "build123d-cad": {
+      "version": "1.1.2",
+      "installedAt": 1779168282093
+    },
+    "pikocnc": {
+      "version": "1.0.0",
+      "installedAt": 1779168285910
+    },
+    "octoclaw-print": {
+      "version": "1.0.0",
+      "installedAt": 1779168289640
+    },
+    "create-dxf": {
+      "version": "0.1.1",
+      "installedAt": 1779168292861
+    },
+    "dxf-handle": {
+      "version": "1.0.0",
+      "installedAt": 1779168296718
+    },
+    "dwg-to-dxf-converter": {
+      "version": "1.0.0",
+      "installedAt": 1779168299948
+    },
+    "dxf-to-image": {
+      "version": "1.0.0",
+      "installedAt": 1779168302855
+    },
+    "dxf-text-extractor": {
+      "version": "1.0.0",
+      "installedAt": 1779168306693
+    },
+    "erp": {
+      "version": "2.0.1",
+      "installedAt": 1779168309980
+    },
+    "mrp": {
+      "version": "1.5.0",
+      "installedAt": 1779168313005
+    },
+    "inventory": {
+      "version": "1.0.0",
+      "installedAt": 1779168315860
+    },
+    "inventory-manager": {
+      "version": "5.0.0",
+      "installedAt": 1779168319855
+    },
+    "inventory-demand-planning": {
+      "version": "1.0.0",
+      "installedAt": 1779168324257
+    },
+    "warehouse": {
+      "version": "2.0.0",
+      "installedAt": 1779168328427
+    },
+    "warehouse-reports": {
+      "version": "1.0.0",
+      "installedAt": 1779168331849
+    },
+    "shipping": {
+      "version": "1.0.0",
+      "installedAt": 1779168334974
+    },
+    "order": {
+      "version": "1.0.0",
+      "installedAt": 1779168337841
+    },
+    "purchase": {
+      "version": "0.1.0",
+      "installedAt": 1779168340728
+    },
+    "purchase-record": {
+      "version": "1.0.1",
+      "installedAt": 1779168345190
+    },
+    "invoice": {
+      "version": "1.0.0",
+      "installedAt": 1779168349534
+    },
+    "quotation-workflow": {
+      "version": "3.0.0",
+      "installedAt": 1779168355919
+    },
+    "quotation-generator": {
+      "version": "1.0.0",
+      "installedAt": 1779168358795
+    },
+    "skill-quotation-engine": {
+      "version": "1.0.1",
+      "installedAt": 1779168361937
+    },
+    "newton-quotation-pdf-extraction": {
+      "version": "0.1.0",
+      "installedAt": 1779168365870
+    },
+    "supply-chain-bom-analyzer": {
+      "version": "1.0.1",
+      "installedAt": 1779168368885
+    },
+    "supplier-scorecard": {
+      "version": "1.0.0",
+      "installedAt": 1779168372695
+    },
+    "supplier-risk-scoring": {
+      "version": "1.0.0",
+      "installedAt": 1779168376720
+    },
+    "production-scheduling": {
+      "version": "1.0.0",
+      "installedAt": 1779168380341
+    },
+    "kaizen": {
+      "version": "1.0.0",
+      "installedAt": 1779168933998
+    },
+    "iqclaw": {
+      "version": "0.1.0",
+      "installedAt": 1779168937214
+    },
+    "iqc-python-tree": {
+      "version": "1.0.0",
+      "installedAt": 1779168941823
+    },
+    "ai-defect-detection": {
+      "version": "1.0.0",
+      "installedAt": 1779168944738
+    },
+    "defect-detector": {
+      "version": "1.0.0",
+      "installedAt": 1779168949186
+    },
+    "standards-compliance-checker": {
+      "version": "2.1.0",
+      "installedAt": 1779168952140
+    },
+    "complaint-8d-report": {
+      "version": "1.1.0",
+      "installedAt": 1779168955686
+    },
+    "8d-problem-solving": {
+      "version": "2.0.0",
+      "installedAt": 1779168959789
+    },
+    "capa-officer": {
+      "version": "2.1.1",
+      "installedAt": 1779168963218
+    },
+    "root-cause-analysis": {
+      "version": "1.0.0",
+      "installedAt": 1779168966145
+    },
+    "complaint-handler": {
+      "version": "1.0.0",
+      "installedAt": 1779168970318
+    },
+    "customer-response-generator": {
+      "version": "1.0.0",
+      "installedAt": 1779168973220
+    },
+    "incident-fupan": {
+      "version": "1.0.0",
+      "installedAt": 1779168976274
+    },
+    "yonghengrisheng-supplier": {
+      "version": "0.2.0",
+      "installedAt": 1779168980023
+    },
+    "auto-parts-quality": {
+      "version": "1.0.0",
+      "installedAt": 1779168983178
+    },
+    "iso-compliance-gap-analysis": {
+      "version": "1.0.2",
+      "installedAt": 1779168986137
+    },
+    "audit": {
+      "version": "1.0.0",
+      "installedAt": 1779168990063
+    },
+    "afrexai-regulatory-compliance": {
+      "version": "1.0.0",
+      "installedAt": 1779168993769
+    },
+    "compliance": {
+      "version": "2.0.0",
+      "installedAt": 1779168996829
+    },
+    "afrexai-workplace-safety": {
+      "version": "1.0.0",
+      "installedAt": 1779168999955
+    },
+    "health-safety-risk-assessment": {
+      "version": "1.0.0",
+      "installedAt": 1779169004301
+    },
+    "safety-checks": {
+      "version": "1.5.2",
+      "installedAt": 1779169007306
+    },
+    "ah-predictive-maintenance-engineer": {
+      "version": "1.0.0",
+      "installedAt": 1779169011305
+    },
+    "cmms": {
+      "version": "1.0.0",
+      "installedAt": 1779169014141
+    },
+    "maintenance": {
+      "version": "2.0.1",
+      "installedAt": 1779169017735
+    },
+    "equipment-maintenance-log": {
+      "version": "0.1.0",
+      "installedAt": 1779169021223
+    },
+    "tpm-copilot": {
+      "version": "1.0.0",
+      "installedAt": 1779169025171
+    },
+    "uplo-environmental": {
+      "version": "1.0.0",
+      "installedAt": 1779169030007
+    },
+    "afrexai-epa-compliance": {
+      "version": "1.0.0",
+      "installedAt": 1779169032942
+    },
+    "farm-task-manager": {
+      "version": "1.0.0",
+      "installedAt": 1779928046757
+    },
+    "agriculture": {
+      "version": "1.0.0",
+      "installedAt": 1779928049975
+    },
+    "ai-intelligent-agriculture-monitoring": {
+      "version": "1.0.3",
+      "installedAt": 1779928053510
+    },
+    "orchard-fruit-trees": {
+      "version": "1.0.0",
+      "installedAt": 1779928102266
+    }
+  }
+}

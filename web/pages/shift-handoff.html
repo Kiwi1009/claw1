@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>班次交接摘要 · OpenClaw</title>
+  <link rel="stylesheet" href="/assets/css/style.css?v=2" />
+</head>
+<body class="tool-page">
+  <div class="app-bg" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">
+        <span class="logo-mark" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
+        <span class="logo-text">Open<span>Claw</span> 製造</span>
+      </a>
+      <nav class="header-nav">
+        <a href="/" class="nav-link">← 首頁</a>
+        <a href="/openclaw/" class="btn btn-primary">AI 控制台</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container page-main">
+    <div class="page-hero">
+      <p class="breadcrumb"><a href="/">首頁</a> / <span>班次交接摘要</span></p>
+      <h1 class="page-title">班次交接摘要</h1>
+      <p class="page-desc">整理設備狀態、異常、待辦與安全提醒，供下班次接續作業。</p>
+    </div>
+    <div class="layout-two">
+      <div class="panel">
+        <h3>本班狀況</h3>
+        <form id="form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>日期／班別</label>
+              <input type="text" id="shiftInfo" placeholder="2025/05/21 早班" />
+            </div>
+            <div class="form-group">
+              <label>交接人</label>
+              <input type="text" id="handoverBy" placeholder="王組長" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>班次摘要（產量、達成率、重點）</label>
+            <textarea id="summary" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>設備狀態（每台一行：機台,狀態,備註）</label>
+            <textarea id="equipment" rows="4" placeholder="CNC-1,運轉中,&#10;CNC-2,停機,待料"></textarea>
+          </div>
+          <div class="form-group">
+            <label>異常與處置</label>
+            <textarea id="incidents" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>待處理事項</label>
+            <textarea id="pending" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>安全提醒</label>
+            <textarea id="safety" rows="2" placeholder="通道積水、吊掛作業等"></textarea>
+          </div>
+          <button type="submit" class="btn">產出交接摘要</button>
+        </form>
+      </div>
+      <div class="panel panel-output">
+        <h3>交接摘要草案</h3>
+        <pre class="output-box" id="output"><span class="output-placeholder">填寫後產出</span></pre>
+        <div class="output-actions">
+          <button type="button" class="btn btn-secondary" onclick="copyOutput('output')">複製</button>
+          <button type="button" class="btn btn-secondary" onclick="downloadOutput('output','shift-handoff.txt')">下載</button>
+        </div>
+      </div>
+    </div>
+  
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a href="/">返回首頁</a>
+      <span>·</span>
+      <a href="/openclaw/">OpenClaw 控制台</a>
+    </div>
+  </footer>
+
+</main>
+  <script src="/assets/js/common.js?v=2"></script>
+  <script>
+    $("form").onsubmit = (e) => {
+      e.preventDefault();
+      const equip = parseLines($("equipment").value)
+        .map((l) => {
+          const p = l.split(/[,，]/).map((s) => s.trim());
+          return `  · ${p[0] || l}：${p[1] || "—"} ${p[2] ? "（" + p[2] + "）" : ""}`;
+        })
+        .join("\n") || "  · （待填）";
+      const text = [
+        "# 生產班次交接摘要",
+        `產出時間：${formatDate()}`,
+        `班別：${$("shiftInfo").value || "—"}`,
+        `交接人：${$("handoverBy").value || "—"}`,
+        "",
+        "## 班次摘要",
+        $("summary").value || "（待填）",
+        "",
+        "## 設備狀態",
+        equip,
+        "",
+        "## 異常與處置",
+        $("incidents").value || "本班無重大異常。",
+        "",
+        "## 待處理事項",
+        $("pending").value || "無。",
+        "",
+        "## 安全提醒",
+        $("safety").value || "請依 SOP 穿戴防護具，注意通道與吊掛安全。",
+        "",
+        "## 下班次重點",
+        "1. 接續未完成工單與待料追蹤",
+        "2. 確認停機設備恢復條件",
+        "3. 複查本班異常是否已通報品保／維修",
+        "",
+        "## 待確認項",
+        !$("summary").value ? "- 班次產量與達成率" : "",
+        !$("handoverBy").value ? "- 交接人簽名" : "",
+      ]
+        .filter(Boolean)
+        .join("\n");
+      showOutput("output", text);
+    };
+  </script>
+</body>
+</html>

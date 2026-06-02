@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CNC 加工報價 · OpenClaw 製造</title>
+  <link rel="stylesheet" href="/assets/css/style.css?v=2" />
+</head>
+<body class="tool-page">
+  <div class="app-bg" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">
+        <span class="logo-mark" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
+        <span class="logo-text">Open<span>Claw</span> 製造</span>
+      </a>
+      <nav class="header-nav">
+        <a href="/" class="nav-link">← 首頁</a>
+        <a href="/openclaw/" class="btn btn-primary">AI 控制台</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container page-main">
+    <div class="page-hero">
+      <p class="breadcrumb"><a href="/">首頁</a> / <span>CNC\ 加工報價</span></p>
+      <h1>CNC 加工報價</h1>
+      <p class="page-desc">依材質、工時與數量估算加工費與風險提示。</p>
+    </div>
+    <div class="layout-two">
+      <div class="panel">
+        <h3>輸入</h3>
+        <form id="form">
+          <div class="form-group"><label>零件名稱／圖號</label><input id="part" /></div>
+          <div class="form-row"><div class="form-group"><label>材質</label><input id="mat" value="6061-T6" /></div>
+          <div class="form-group"><label>數量</label><input type="number" id="qty" value="100" /></div></div>
+          <div class="form-row"><div class="form-group"><label>預估工時(hr)</label><input type="number" id="hours" step="0.1" value="2.5" /></div>
+          <div class="form-group"><label>機時費率</label><input type="number" id="rate" value="1200" /></div></div>
+          <div class="form-group"><label>備註（薄壁、深孔等）</label><textarea id="risk"></textarea></div>
+        
+          <button type="submit" class="btn" style="margin-top:0.75rem">產出草案</button>
+        </form>
+      </div>
+      <div class="panel panel-output">
+        <h3>輸出草案</h3>
+        <pre class="output-box" id="output"><span class="output-placeholder">填寫後按「產出草案」</span></pre>
+        <div class="output-actions">
+          <button type="button" class="btn btn-secondary" onclick="copyOutput('output')">複製</button>
+          <button type="button" class="btn btn-secondary" onclick="downloadOutput('output','cnc-quote.txt')">下載</button>
+        </div>
+      </div>
+    </div>
+  
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a href="/">返回首頁</a>
+      <span>·</span>
+      <a href="/openclaw/">OpenClaw 控制台</a>
+    </div>
+  </footer>
+
+</main>
+  <script src="/assets/js/common.js?v=2"></script>
+  <script>
+          $("form").onsubmit=e=>{e.preventDefault();
+            const h=+$("hours").value,r=+$("rate").value,q=+$("qty").value;
+            const unit=(h*r)/q; const setup=h*r*0.15;
+            showOutput("output",[`=== CNC 報價草案 ===`,`零件：${$("part").value}`,`材質：${$("mat").value}`,`數量：${q}`,`加工費/件：${unit.toFixed(2)}`,`開機費：${setup.toFixed(0)}`,`總價估算：${(unit*q+setup).toFixed(0)}`,$("risk").value?"風險："+$("risk").value:""].filter(Boolean).join("\n"));
+          };
+        </script>
+</body>
+</html>

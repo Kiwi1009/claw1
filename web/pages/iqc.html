@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IQC 來料檢驗 · OpenClaw</title>
+  <link rel="stylesheet" href="/assets/css/style.css?v=2" />
+</head>
+<body class="tool-page">
+  <div class="app-bg" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">
+        <span class="logo-mark" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
+        <span class="logo-text">Open<span>Claw</span> 製造</span>
+      </a>
+      <nav class="header-nav">
+        <a href="/" class="nav-link">← 首頁</a>
+        <a href="/openclaw/" class="btn btn-primary">AI 控制台</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container page-main">
+    <div class="page-hero">
+      <p class="breadcrumb"><a href="/">首頁</a> / <span>IQC\ 來料檢驗</span></p>
+      <h1 class="page-title">IQC 來料檢驗</h1>
+      <p class="page-desc">登錄進料批號、抽樣、檢驗結果與判定，產出可匯入系統的結構化紀錄。</p>
+    </div>
+    <div class="layout-two">
+      <div class="panel">
+        <h3>檢驗資料</h3>
+        <form id="form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>進料單號</label>
+              <input type="text" id="grn" required />
+            </div>
+            <div class="form-group">
+              <label>供應商</label>
+              <input type="text" id="vendor" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>料號</label>
+              <input type="text" id="partNo" required />
+            </div>
+            <div class="form-group">
+              <label>批號</label>
+              <input type="text" id="lot" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>進料數量</label>
+              <input type="number" id="qtyIn" min="1" />
+            </div>
+            <div class="form-group">
+              <label>抽樣數</label>
+              <input type="number" id="sampleSize" min="1" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>不良數</label>
+              <input type="number" id="defectCount" min="0" value="0" />
+            </div>
+            <div class="form-group">
+              <label>判定</label>
+              <select id="result">
+                <option value="合格">合格</option>
+                <option value="让步接收">让步接收</option>
+                <option value="退货">退货</option>
+                <option value="隔离待判">隔离待判</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>檢驗項目與數據（每行一項）</label>
+            <textarea id="checks" rows="4" placeholder="外觀: OK&#10;尺寸 10±0.1: 9.98,10.02"></textarea>
+          </div>
+          <div class="form-group">
+            <label>異常說明</label>
+            <textarea id="note"></textarea>
+          </div>
+          <button type="submit" class="btn">產出 IQC 紀錄</button>
+        </form>
+      </div>
+      <div class="panel panel-output">
+        <h3>IQC 紀錄（JSON + 文字）</h3>
+        <pre class="output-box" id="output"></pre>
+        <div class="output-actions">
+          <button type="button" class="btn btn-secondary" onclick="copyOutput('output')">複製</button>
+          <button type="button" class="btn btn-secondary" onclick="downloadOutput('output','iqc-record.json')">下載 JSON</button>
+        </div>
+      </div>
+    </div>
+  
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a href="/">返回首頁</a>
+      <span>·</span>
+      <a href="/openclaw/">OpenClaw 控制台</a>
+    </div>
+  </footer>
+
+</main>
+  <script src="/assets/js/common.js?v=2"></script>
+  <script>
+    $("form").onsubmit = (e) => {
+      e.preventDefault();
+      const checks = parseLines($("checks").value).map((l) => {
+        const [k, ...v] = l.split(/[:：]/);
+        return { item: (k || l).trim(), value: v.join(":").trim() || "—" };
+      });
+      const record = {
+        type: "IQC",
+        timestamp: new Date().toISOString(),
+        grn: $("grn").value,
+        vendor: $("vendor").value,
+        partNo: $("partNo").value,
+        lot: $("lot").value,
+        qtyIn: +$("qtyIn").value,
+        sampleSize: +$("sampleSize").value,
+        defectCount: +$("defectCount").value,
+        result: $("result").value,
+        checks,
+        note: $("note").value,
+        status: "draft",
+      };
+      showOutput("output", JSON.stringify(record, null, 2));
+    };
+  </script>
+</body>
+</html>

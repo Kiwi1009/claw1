@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>現場數位登錄 · OpenClaw</title>
+  <link rel="stylesheet" href="/assets/css/style.css?v=2" />
+</head>
+<body class="tool-page">
+  <div class="app-bg" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">
+        <span class="logo-mark" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
+        <span class="logo-text">Open<span>Claw</span> 製造</span>
+      </a>
+      <nav class="header-nav">
+        <a href="/" class="nav-link">← 首頁</a>
+        <a href="/openclaw/" class="btn btn-primary">AI 控制台</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container page-main">
+    <div class="page-hero">
+      <p class="breadcrumb"><a href="/">首頁</a> / <span>現場數位登錄</span></p>
+      <h1 class="page-title">現場數位登錄（輕量 MES）</h1>
+      <p class="page-desc">登錄工單完成數、不良、停機。產出可貼回 MES 或班報的結構化紀錄。</p>
+    </div>
+    <div class="layout-two">
+      <div class="panel">
+        <h3>登錄資料</h3>
+        <form id="form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>登錄時間</label>
+              <input type="datetime-local" id="time" />
+            </div>
+            <div class="form-group">
+              <label>班別</label>
+              <select id="shift">
+                <option>早班</option>
+                <option>中班</option>
+                <option>晚班</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>工單號</label>
+              <input type="text" id="wo" placeholder="WO-20250521-001" required />
+            </div>
+            <div class="form-group">
+              <label>產線／機台</label>
+              <input type="text" id="line" placeholder="Line-3 / CNC-2" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>完成數量</label>
+              <input type="number" id="good" min="0" value="0" />
+            </div>
+            <div class="form-group">
+              <label>不良數量</label>
+              <input type="number" id="defect" min="0" value="0" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>不良代碼／說明</label>
+            <input type="text" id="defectNote" placeholder="SCR-01 表面刮傷" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>停機分鐘</label>
+              <input type="number" id="downtime" min="0" value="0" />
+            </div>
+            <div class="form-group">
+              <label>停機原因</label>
+              <input type="text" id="downtimeReason" placeholder="待料、故障、換線" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>備註</label>
+            <textarea id="note" placeholder="操作員、物料批號等"></textarea>
+          </div>
+          <button type="submit" class="btn">產出登錄紀錄</button>
+        </form>
+      </div>
+      <div class="panel panel-output">
+        <h3>登錄紀錄草案</h3>
+        <pre class="output-box" id="output"><span class="output-placeholder">填寫左側表單後按「產出登錄紀錄」</span></pre>
+        <div class="output-actions">
+          <button type="button" class="btn btn-secondary" onclick="copyOutput('output')">複製</button>
+          <button type="button" class="btn btn-secondary" onclick="downloadOutput('output','mes-log.txt')">下載</button>
+        </div>
+      </div>
+    </div>
+  
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a href="/">返回首頁</a>
+      <span>·</span>
+      <a href="/openclaw/">OpenClaw 控制台</a>
+    </div>
+  </footer>
+
+</main>
+  <script src="/assets/js/common.js?v=2"></script>
+  <script>
+    $("time").value = new Date().toISOString().slice(0, 16);
+    $("form").onsubmit = (e) => {
+      e.preventDefault();
+      const good = +$("good").value || 0;
+      const defect = +$("defect").value || 0;
+      const total = good + defect;
+      const yieldPct = total ? ((good / total) * 100).toFixed(2) : "—";
+      const text = [
+        "=== MES 現場登錄紀錄 ===",
+        `時間：${$("time").value || formatDate()}`,
+        `班別：${$("shift").value}`,
+        `工單：${$("wo").value}`,
+        `產線：${$("line").value || "—"}`,
+        "---",
+        `完成數：${good}`,
+        `不良數：${defect}`,
+        `良率：${yieldPct}%`,
+        `不良說明：${$("defectNote").value || "—"}`,
+        `停機：${$("downtime").value || 0} 分鐘`,
+        `停機原因：${$("downtimeReason").value || "—"}`,
+        `備註：${$("note").value || "—"}`,
+        "---",
+        `登錄人：（待填）`,
+        `狀態：草案 · 待主管確認`,
+      ].join("\n");
+      showOutput("output", text);
+    };
+  </script>
+</body>
+</html>
