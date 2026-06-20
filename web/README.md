@@ -34,7 +34,7 @@
 製造入口透過 `manufacturing-portal` 插件提供靜態檔。OpenClaw 的 `/` 前綴路由**不會**涵蓋 `/assets`、`/pages`，插件已額外註冊這兩條路徑。若首頁無樣式，請確認：
 
 ```bash
-curl -I http://127.0.0.1:18789/assets/css/style.css   # 應為 200
+curl -I http://127.0.0.1:28789/assets/css/style.css   # 應為 200
 openclaw gateway restart
 ```
 
@@ -52,10 +52,10 @@ cd web && python3 -m http.server 8080
 openclaw gateway restart
 ```
 
-然後開啟 Gateway 埠（預設 **18789**）：
+然後開啟 Gateway 埠（預設 **28789**）：
 
-- http://127.0.0.1:18789/ — 製造首頁
-- http://127.0.0.1:18789/openclaw/ — OpenClaw 控制台
+- http://127.0.0.1:28789/ — 製造首頁
+- http://127.0.0.1:28789/openclaw/ — OpenClaw 控制台
 
 ## 設定位置
 

@@ -18,8 +18,8 @@ openclaw gateway status
 
 開啟：
 
-- `http://127.0.0.1:18789/`：製造首頁
-- `http://127.0.0.1:18789/openclaw/`：OpenClaw 控制台
+- `http://127.0.0.1:28789/` 或 `https://manuclaw.graceai.net/`：製造首頁
+- `http://127.0.0.1:28789/openclaw/` 或 `https://manuclaw.graceai.net/openclaw/`：OpenClaw 控制台
 
 ### 2) 本機靜態預覽（僅 UI）
 
@@ -77,7 +77,7 @@ openclaw cron disable <job-id>
   先確認資源可讀：
 
   ```bash
-  curl -I http://127.0.0.1:18789/assets/css/style.css
+  curl -I http://127.0.0.1:28789/assets/css/style.css
   ```
 
   若非 200，重啟 Gateway：
